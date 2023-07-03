@@ -12,7 +12,9 @@ RoxygenNote: 5.0.1
 Remotes:
     decryptr/captcha,
     gitronald/files
-Imports: xml2,
+Imports: 
+    captcha,
+    xml2,
     rvest,
     magrittr,
     httr,
