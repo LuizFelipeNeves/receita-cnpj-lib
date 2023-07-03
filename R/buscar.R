@@ -1,3 +1,5 @@
+ library(captcha)
+ 
 #' Busca um CNPJ no site da Receita Federal
 #'
 #' Realiza uma busca de um CNPJ na Receita Federal e salva resultados em arquivo.
@@ -91,12 +93,12 @@ baixar_um <- function(cnpj, dir, arq_html) {
 
   message(sprintf("Analisando captcha %s", paste0(arq, ".png")))
 
-  model <- captcha::captcha_load_model("rfb")
+  model <- captcha_load_model("rfb")
   image <- paste0(arq, ".png")
-  file <- captcha::read_captcha(image)
+  file <- read_captcha(image)
 
   # Break captcha
-  captcha <- captcha::decrypt(file, model)
+  captcha <- decrypt(file, model)
 
   message(sprintf("Captcha %s", captcha))
 
