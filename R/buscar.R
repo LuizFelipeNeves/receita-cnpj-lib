@@ -91,7 +91,7 @@ baixar_um <- function(cnpj, dir, arq_html) {
 
   message(sprintf("Analisando captcha %s", paste0(arq, ".png")))
 
-  model <- captcha::captcha_load_model("rfb")
+  model <- captcha::load_model("rfb")
   image <- paste0(arq, ".png")
   file <- captcha::read_captcha(image)
 
