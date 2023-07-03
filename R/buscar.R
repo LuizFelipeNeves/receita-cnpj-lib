@@ -106,8 +106,8 @@ baixar_um <- function(cnpj, dir, arq_html) {
 
   message(sprintf("Validando %s", cnpj))
   httr::POST(u_valid, body = dados, to,
-             httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao))),
-             encode = 'form', header={ Referer: u_consulta }, httr::write_disk(arq_html, overwrite = TRUE))
+             httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))),
+             encode = 'form', header={ 'Referer': u_consulta }, httr::write_disk(arq_html, overwrite = TRUE))
 }
 
 check_cnpj <- function(cnpj) {
