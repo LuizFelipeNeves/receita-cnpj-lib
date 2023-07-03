@@ -1,5 +1,5 @@
 u_check <- function() {
-  'http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp'
+  'https://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp'
 }
 u_qsa <- function() {
   'https://solucoes.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_qsa.asp'
@@ -14,7 +14,7 @@ u_captcha_audio <- function() {
 }
 
 u_receita <- function(cnpj = '') {
-  u <- 'http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp?cnpj=%s'
+  u <- 'https://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp?cnpj=%s'
   sprintf(u, cnpj)
 }
 
