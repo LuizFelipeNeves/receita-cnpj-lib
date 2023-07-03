@@ -1,4 +1,4 @@
-library('captcha')
+library(captcha)
 
 #' Busca um CNPJ no site da Receita Federal
 #'
