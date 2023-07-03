@@ -103,9 +103,11 @@ baixar_um <- function(cnpj, dir, arq_html) {
   file.remove(paste0(arq, ".png"))
   dados <- form_data(cnpj, captcha)
   u_valid <- u_validacao()
+
+  message(sprintf("Validando %s", cnpj))
   httr::POST(u_valid, body = dados, to,
              httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao))),
-             encode = 'form', httr::write_disk(arq_html, overwrite = TRUE))
+             encode = 'form', header={ Referer: u_consulta }, httr::write_disk(arq_html, overwrite = TRUE))
 }
 
 check_cnpj <- function(cnpj) {
@@ -118,6 +120,5 @@ form_data <- function(cnpj, captcha) {
   dados <- list(origem = 'comprovante',
                 cnpj = cnpj,
                 txtTexto_captcha_serpro_gov_br = captcha,
-                submit1 = 'Consultar',
                 search_type = 'cnpj')
 }

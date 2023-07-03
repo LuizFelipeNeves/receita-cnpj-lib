@@ -60,4 +60,6 @@ server <- function(input, output) {
 
 }
 
+options(shiny.port = 80)
+options(shiny.host = '0.0.0.0')
 shinyApp(ui = ui, server = server)
