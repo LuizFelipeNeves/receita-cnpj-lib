@@ -1,3 +1,5 @@
+library('captcha')
+
 #' Busca um CNPJ no site da Receita Federal
 #'
 #' Realiza uma busca de um CNPJ na Receita Federal e salva resultados em arquivo.
@@ -72,33 +74,34 @@ baixar_um <- function(cnpj, dir, arq_html) {
   httr::handle_reset(u_consulta)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   url_gera_captcha <- u_captcha_img()
-  url_audio <- u_captcha_audio()
   solicitacao <- httr::GET(u_consulta)
   data_hora <- stringr::str_replace_all(lubridate::now(), "[^0-9]", "")
   if (is.null(dir)) dir <- tempdir()
   arq <- tempfile(pattern = data_hora, tmpdir = dir)
-  wd_aud <- httr::write_disk(paste0(arq, ".wav"), overwrite = TRUE)
   wd_img <- httr::write_disk(paste0(arq, ".png"), overwrite = TRUE)
 
   cookie <- httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao)))
   imagem <- httr::GET(url_gera_captcha, wd_img, to, cookie)
-  audio <- httr::GET(url_audio, wd_aud, to, cookie)
 
-  while (as.numeric(audio$headers[["content-length"]]) < 1) {
+  while (as.numeric(imagem$headers[["content-length"]]) < 1) {
     sl <- 3
     msg <- sprintf("Aconteceu algum problema. Tentando novamente em %d segundos...", sl)
     message(msg)
     Sys.sleep(sl)
     imagem <- httr::GET(url_gera_captcha, wd_img, to, cookie)
-    audio <- httr::GET(url_audio, wd_aud, to, cookie)
   }
 
-  message(sprintf("Analisando audio"))
-  captcha <- captchaReceitaAudio::predizer(paste0(arq, ".wav"))
+  message(sprintf("Analisando captcha %s", paste0(arq, ".png")))
+
+  model <- captcha_load_model("rfb")
+  image <- paste0(arq, ".png")
+  file <- read_captcha(image)
+
+  # Break captcha
+  captcha <- decrypt(file, model)
 
   message(sprintf("Captcha %s", captcha))
 
-  file.remove(paste0(arq, ".wav"))
   file.remove(paste0(arq, ".png"))
   dados <- form_data(cnpj, captcha)
   u_valid <- u_validacao()

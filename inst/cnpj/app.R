@@ -21,7 +21,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
-  file.remove(dir('.', full.names = TRUE, pattern = '\\.html$|\\.png$|\\.wav$'))
+  file.remove(dir('.', full.names = TRUE, pattern = '\\.html$|\\.png$'))
 
   check <- reactive({
     if (!is.null(input$go) && input$go > 0) {
