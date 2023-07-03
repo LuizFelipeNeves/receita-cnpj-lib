@@ -18,13 +18,13 @@ buscar_cnpj <- function(cnpj, output = 'both', dir = '.', qsa = FALSE) {
   arq_html <- sprintf('%s/%s.html', dir, cnpj)
   tentativas <- 0
   while ((!file.exists(arq_html) || file.size(arq_html) == 8391) && tentativas < 10) {
-    tentativas <- tentativas + 1
     if (tentativas > 1) cat(sprintf('Tentativa %02d...\n', tentativas))
     try({
-      r <- baixar_um(cnpj, dir, arq_html)
+      tentativas <- tentativas + 1
+      re <- baixar_um(cnpj, dir, arq_html)
       if (qsa) {
         arq_qsa <- sprintf('%s/%s_qsa.html', dir, cnpj)
-        baixar_qsa(r, arq_qsa)
+        baixar_qsa(re, arq_qsa)
       }
     })
     Sys.sleep(1)
@@ -56,8 +56,8 @@ buscar_cnpj <- function(cnpj, output = 'both', dir = '.', qsa = FALSE) {
 #'
 #' @export
 has_conn <- function() {
-  r <- try({httr::GET(u_check(), httr::timeout(3))}, silent = TRUE)
-  !is.null(r) && (class(r) == 'response') && (r[['status_code']] == 200)
+  r2 <- try({httr::GET(u_check(), httr::timeout(3))}, silent = TRUE)
+  !is.null(r2) && (class(r2) == 'response') && (r2[['status_code']] == 200)
 }
 
 baixar_qsa <- function(r, arq_qsa) {
@@ -79,18 +79,24 @@ baixar_um <- function(cnpj, dir, arq_html) {
   arq <- tempfile(pattern = data_hora, tmpdir = dir)
   wd_aud <- httr::write_disk(paste0(arq, ".wav"), overwrite = TRUE)
   wd_img <- httr::write_disk(paste0(arq, ".png"), overwrite = TRUE)
-  imagem <- httr::GET(url_gera_captcha, wd_img, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
-  audio <- httr::GET(url_audio, wd_aud, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
+
+  cookie <- httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao)))
+  imagem <- httr::GET(url_gera_captcha, wd_img, to, cookie)
+  audio <- httr::GET(url_audio, wd_aud, to, cookie)
+
   while (as.numeric(audio$headers[["content-length"]]) < 1) {
     sl <- 3
     msg <- sprintf("Aconteceu algum problema. Tentando novamente em %d segundos...", sl)
     message(msg)
     Sys.sleep(sl)
-    imagem <- httr::GET(url_gera_captcha, wd_img, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
-    audio <- httr::GET(url_audio, wd_aud, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
+    imagem <- httr::GET(url_gera_captcha, wd_img, to, cookie)
+    audio <- httr::GET(url_audio, wd_aud, to, cookie)
   }
 
   captcha <- captchaReceitaAudio::predizer(paste0(arq, ".wav"))
+
+  cat(sprintf("Captcha %s", captcha))
+
   file.remove(paste0(arq, ".wav"))
   file.remove(paste0(arq, ".png"))
   dados <- form_data(cnpj, captcha)
