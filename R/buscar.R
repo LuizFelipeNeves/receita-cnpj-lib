@@ -93,9 +93,10 @@ baixar_um <- function(cnpj, dir, arq_html) {
     audio <- httr::GET(url_audio, wd_aud, to, cookie)
   }
 
+  message(sprintf("Analisando audio"))
   captcha <- captchaReceitaAudio::predizer(paste0(arq, ".wav"))
 
-  cat(sprintf("Captcha %s", captcha))
+  message(sprintf("Captcha %s", captcha))
 
   file.remove(paste0(arq, ".wav"))
   file.remove(paste0(arq, ".png"))
