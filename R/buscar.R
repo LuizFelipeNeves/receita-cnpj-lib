@@ -79,15 +79,15 @@ baixar_um <- function(cnpj, dir, arq_html) {
   arq <- tempfile(pattern = data_hora, tmpdir = dir)
   wd_aud <- httr::write_disk(paste0(arq, ".wav"), overwrite = TRUE)
   wd_img <- httr::write_disk(paste0(arq, ".png"), overwrite = TRUE)
-  imagem <- httr::GET(url_gera_captcha, wd_img, to)
-  audio <- httr::GET(url_audio, wd_aud, to)
+  imagem <- httr::GET(url_gera_captcha, wd_img, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
+  audio <- httr::GET(url_audio, wd_aud, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
   while (as.numeric(audio$headers[["content-length"]]) < 1) {
     sl <- 3
     msg <- sprintf("Aconteceu algum problema. Tentando novamente em %d segundos...", sl)
     message(msg)
     Sys.sleep(sl)
-    imagem <- httr::GET(url_gera_captcha, wd_img, to)
-    audio <- httr::GET(url_audio, wd_aud, to)
+    imagem <- httr::GET(url_gera_captcha, wd_img, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
+    audio <- httr::GET(url_audio, wd_aud, to, httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))))
   }
 
   captcha <- captchaReceitaAudio::predizer(paste0(arq, ".wav"))
