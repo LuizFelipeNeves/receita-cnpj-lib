@@ -1,0 +1,25 @@
+Package: cnpjReceita
+Title: Consulta CNPJ na Receita
+Version: 0.0.0.9001
+Authors@R: person("Julio", "Trecenti", email = "jtrecenti@jtrecenti.com", role = c("aut", "cre"))
+Description: Consulta CNPJ na Receita e baixa HTML ou data frame correspondente ao resultado da pesquisa.
+Depends:
+    R (>= 3.3.1)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
+Remotes: decryptr/captchaReceitaAudio
+Imports: xml2,
+    rvest,
+    magrittr,
+    httr,
+    readr,
+    stringr,
+    captchaReceitaAudio,
+    lubridate,
+    tibble,
+    purrr,
+    dplyr
+Suggests: testthat,
+    curl
