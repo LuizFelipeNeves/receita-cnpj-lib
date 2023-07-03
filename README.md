@@ -10,7 +10,7 @@ Webscraper que realiza consulta de CNPJ na Receita Federal.
 
 ```r
 if (!require(devtools)) install.packages('devtools')
-devtools::install_github('jtrecenti/cnpjReceita')
+devtools::install_github('LuizFelipeNeves/receita-cnpj-lib')
 ```
 
 ## Modo de uso
