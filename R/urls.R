@@ -14,7 +14,7 @@ u_captcha_audio <- function() {
 }
 
 u_receita <- function(cnpj = '') {
-  u <- 'hhttp://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp?cnpj=%s'
+  u <- 'http://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao_CS.asp?cnpj=%s'
   sprintf(u, cnpj)
 }
 
