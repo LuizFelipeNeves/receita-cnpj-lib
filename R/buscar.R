@@ -109,7 +109,7 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao)))
   header <- httr::add_headers(Referer = u_receita(cnpj))
   httr::POST(u_valid, body = dados, to, cookie, encode = 'form', header)
-  httr::GET(u_result, to, cookie, header, httr::write_disk(arq_html, overwrite = TRUE))
+  httr::GET(u_result(), to, cookie, header, httr::write_disk(arq_html, overwrite = TRUE))
 }
 
 check_cnpj <- function(cnpj) {
