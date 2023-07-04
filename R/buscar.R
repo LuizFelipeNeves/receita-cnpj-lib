@@ -13,15 +13,15 @@
 #'   \code{qsa} informações do quadro social.
 #'
 #' @export
-buscar_cnpj <- function(cnpj, output = 'both', dir = '.', qsa = FALSE) {
-  cnpj <- check_cnpj(cnpj)
+buscar_cnpj <- function(maskCNPJ, output = 'both', dir = '.', qsa = FALSE) {
+  cnpj <- check_cnpj(maskCNPJ)
   arq_html <- sprintf('%s/%s.html', dir, cnpj)
   tentativas <- 0
   while ((!file.exists(arq_html) || file.size(arq_html) == 8391) && tentativas < 10) {
     if (tentativas > 1) cat(sprintf('Tentativa %02d...\n', tentativas))
     try({
       tentativas <- tentativas + 1
-      re <- baixar_um(cnpj, dir, arq_html)
+      re <- baixar_um(maskCNPJ, dir, arq_html)
       if (qsa) {
         arq_qsa <- sprintf('%s/%s_qsa.html', dir, cnpj)
         baixar_qsa(re, arq_qsa)
@@ -66,7 +66,8 @@ baixar_qsa <- function(r, arq_qsa) {
             httr::write_disk(arq_qsa, overwrite = TRUE))
 }
 
-baixar_um <- function(cnpj, dir, arq_html) {
+baixar_um <- function(maskCNPJ, dir, arq_html) {
+  cnpj <- check_cnpj(maskCNPJ)
   to <- httr::timeout(3)
   u_consulta <- u_receita(cnpj)
   httr::handle_reset(u_consulta)
@@ -101,13 +102,13 @@ baixar_um <- function(cnpj, dir, arq_html) {
   message(sprintf("Captcha %s", captcha))
 
   file.remove(paste0(arq, ".png"))
-  dados <- form_data(cnpj, captcha)
+  dados <- form_data(maskCNPJ, captcha)
   u_valid <- u_validacao()
 
   message(sprintf("Validando %s", cnpj))
   httr::POST(u_valid, body = dados, to,
              httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))),
-             encode = 'form', header={ 'Referer': u_consulta }, httr::write_disk(arq_html, overwrite = TRUE))
+             encode = 'form', add_headers(Referer = u_consulta), httr::write_disk(arq_html, overwrite = TRUE))
 }
 
 check_cnpj <- function(cnpj) {
