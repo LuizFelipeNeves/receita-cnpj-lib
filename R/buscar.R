@@ -68,7 +68,7 @@ baixar_qsa <- function(r, arq_qsa) {
 
 baixar_um <- function(maskCNPJ, dir, arq_html) {
   cnpj <- check_cnpj(maskCNPJ)
-  to <- httr::timeout(3)
+  to <- httr::timeout(20)
   u_consulta <- u_base()
   httr::handle_reset(u_consulta)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
@@ -116,7 +116,6 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   validate <- httr::POST(u_valid, body = dados, to, cookie, encode = 'form', header)
 
   campos <- u_campos()
-
   message(sprintf("Campos %s", cnpj))
   campos <- httr::GET(campos, to, cookie, header)
 
