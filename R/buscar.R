@@ -69,7 +69,7 @@ baixar_qsa <- function(r, arq_qsa) {
 baixar_um <- function(maskCNPJ, dir, arq_html) {
   cnpj <- check_cnpj(maskCNPJ)
   to <- httr::timeout(3)
-  u_consulta <- u_receita(cnpj)
+  u_consulta <- u_check
   httr::handle_reset(u_consulta)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   url_gera_captcha <- u_captcha_img()
@@ -106,9 +106,11 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   u_valid <- u_validacao()
 
   message(sprintf("Validando %s", cnpj))
-  httr::POST(u_valid, body = dados, to,
-             httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao))),
-             encode = 'form', httr::add_headers(Referer = u_consulta), httr::write_disk(arq_html, overwrite = TRUE))
+  cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao)))
+  header <- httr::add_headers(Referer = u_receita(cnpj))
+  resF <- httr::POST(u_valid, body = dados, to, cookie, encode = 'form', header, httr::write_disk(arq_html, overwrite = TRUE))
+  message(sprintf('%d %s', resF[['status_code']], resF[['url']])) 
+  resF
 }
 
 check_cnpj <- function(cnpj) {
