@@ -12,4 +12,3 @@ TRUE se acessa o site da Receita, FALSE caso contrário.
 \description{
 Verifica se é possível acessar a página de busca de CNPJ da Receita.
 }
-

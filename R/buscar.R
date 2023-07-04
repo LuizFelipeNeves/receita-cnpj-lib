@@ -69,11 +69,16 @@ baixar_qsa <- function(r, arq_qsa) {
 baixar_um <- function(maskCNPJ, dir, arq_html) {
   cnpj <- check_cnpj(maskCNPJ)
   to <- httr::timeout(3)
-  u_consulta <- u_check
+  u_consulta <- u_base()
   httr::handle_reset(u_consulta)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   url_gera_captcha <- u_captcha_img()
   solicitacao <- httr::GET(u_consulta)
+
+  cookie <- httr::set_cookies(.cookies = unlist(httr::cookies(solicitacao)))
+  u_consulta <- u_check()
+  solicitacao <- httr::GET(u_consulta, cookie)
+
   data_hora <- stringr::str_replace_all(lubridate::now(), "[^0-9]", "")
   if (is.null(dir)) dir <- tempdir()
   arq <- tempfile(pattern = data_hora, tmpdir = dir)
@@ -110,8 +115,15 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   header <- httr::add_headers(Referer = u_receita(cnpj))
   validate <- httr::POST(u_valid, body = dados, to, cookie, encode = 'form', header)
 
-  cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(validate)))
-  httr::GET(u_result(cnpj), to, cookie, header, httr::write_disk(arq_html, overwrite = TRUE))
+  campos <- u_campos()
+
+  message(sprintf("Campos %s", cnpj))
+  campos <- httr::GET(campos, to, cookie, header)
+
+  message(sprintf("Comprovante %s", cnpj))
+  cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao)))
+  comprovante <- u_comprovante()
+  httr::GET(comprovante, to, cookie, header, httr::write_disk(arq_html, overwrite = TRUE))
 }
 
 check_cnpj <- function(cnpj) {
