@@ -1,9 +1,10 @@
 fix_html <- function (x, arq_html) {
-  txts <- xml2::read_html(x) |>
-  stringr::str_replace(
+  txts <- x %>%
+    rvest::html_text() %>%
+    stringr::str_replace(
     pattern = "images/brasao2.gif", 
     replace = "http://www.receita.fazenda.gov.br/PessoaJuridica/CNPJ/cnpjreva/images/brasao2.gif") |>
-  writeLines(con = arq_html)
+    writeLines(con = arq_html)
   x
 }
 
