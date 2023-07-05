@@ -95,24 +95,23 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
     imagem <- httr::GET(url_gera_captcha, wd_img, to, cookie)
   }
 
-  message(sprintf("Analisando captcha %s", paste0(arq, ".png")))
+  image <- paste0(arq, ".png")
+  message(sprintf("Analisando captcha %s", image))
 
   model <- captcha::captcha_load_model("rfb")
-  image <- paste0(arq, ".png")
   file <- captcha::read_captcha(image)
 
   # Break captcha
   captcha <- captcha::decrypt(file, model)
+  file.remove(image)
 
   message(sprintf("Captcha %s", captcha))
 
-  file.remove(paste0(arq, ".png"))
+  message(sprintf("Validando %s | %s", maskCNPJ, captcha))
   dados <- form_data(maskCNPJ, captcha)
-  u_valid <- u_validacao()
-
-  message(sprintf("Validando %s", cnpj))
   cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao)))
   header <- httr::add_headers(Referer = u_receita(cnpj))
+  u_valid <- u_validacao()
   validate <- httr::POST(u_valid, body = dados, to, cookie, encode = 'form', header)
 
   campos <- u_campos()
@@ -120,9 +119,9 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   campos <- httr::GET(campos, to, cookie, header)
 
   message(sprintf("Comprovante %s", cnpj))
-  cookie <- httr::set_cookies("flag" = '1', .cookies = unlist(httr::cookies(solicitacao)))
-  comprovante <- u_comprovante()
-  httr::GET(comprovante, to, cookie, header, httr::write_disk(arq_html, overwrite = TRUE))
+  comprovante_url <- u_comprovante()
+  comprovante <- httr::GET(comprovante_url, to, cookie, header)
+  fix_html(comprovante, arq_html)
 }
 
 check_cnpj <- function(cnpj) {
