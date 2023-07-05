@@ -1,6 +1,5 @@
 fix_html <- function (x, arq_html) {
-  txts <- x %>%
-    httr::content(r, "text") %>%
+  txts <- httr::content(x, "text") %>%
     stringr::str_replace(
     pattern = "images/brasao2.gif", 
     replace = "http://www.receita.fazenda.gov.br/PessoaJuridica/CNPJ/cnpjreva/images/brasao2.gif") |>
