@@ -122,6 +122,7 @@ baixar_um <- function(maskCNPJ, dir, arq_html) {
   comprovante_url <- u_comprovante()
   comprovante <- httr::GET(comprovante_url, to, cookie, header)
   fix_html(comprovante, arq_html)
+  comprovante
 }
 
 check_cnpj <- function(cnpj) {

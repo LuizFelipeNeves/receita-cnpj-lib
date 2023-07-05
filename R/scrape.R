@@ -1,10 +1,9 @@
 fix_html <- function (x, arq_html) {
-  txts <- httr::content(x, "text") %>%
+  text <- httr::content(x, "text", 'text/html', 'latin1') %>%
     stringr::str_replace(
     pattern = "images/brasao2.gif", 
-    replace = "http://www.receita.fazenda.gov.br/PessoaJuridica/CNPJ/cnpjreva/images/brasao2.gif") |>
-    writeLines(con = arq_html)
-  x
+    replace = "http://www.receita.fazenda.gov.br/PessoaJuridica/CNPJ/cnpjreva/images/brasao2.gif")
+  writeLines(text, arq_html)
 }
 
 scrape_cnpj <- function(x) {
